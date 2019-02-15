@@ -1,7 +1,5 @@
-![logo](https://user-images.githubusercontent.com/29721784/52025031-c6891b00-24b7-11e9-8cac-4fa4d1dfd10d.png)
-
-# simple-boilerplate
-Simple Boilerplate is for HTML/CSS, Javascript, and JQuery projects. It has been setup with a live server so that you can see live changes with every save.
+# Linked List + Dynamic Array (2/15)
+Read in a list of names and sort them alphabetically. (Imagine they're users). Implement the sort yourself, do not rely on built in sort functions. Provide a function to check if a name is in this list.
 
 ### Getting Started
 You can either fork or clone this repo.
