@@ -3,15 +3,15 @@ class LinkedList {
     this.node = {
       before: null,
       item: null,
-      next: null,
+      next: null
     };
     this.head = null;
   }
-  getHead(item) {
+  getHead() {
     return this.head;
   }
   getNext(item) {
-    return node.next;
+    return item.next;
   }
   getLastNode() {
     let currNode = this.head;
@@ -33,11 +33,11 @@ class LinkedList {
     let node = {
       before: null,
       item: item,
-      next: null,
-    }
+      next: null
+    };
     if (!this.head) {
-      return this.head = node;
-    } 
+      return (this.head = node);
+    }
     // transverse from head through list until you reach a null next
     let lastNode = this.getLastNode();
     lastNode.next = node;
@@ -50,17 +50,104 @@ class LinkedList {
     this.head = nextNode;
   }
   unshift(item) {
-    // adds item to beginning of list 
+    // adds item to beginning of list
     let currHead = this.head;
     let node = {
       before: null,
       item: item,
-      next: currHead,
-    }
+      next: currHead
+    };
     this.head = node;
   }
-  sort(orderBy) {
+  printAllItems() {
+    console.log('=============')
+    let currNode = this.head;
+    while (currNode.item) {
+      console.log(currNode.item);
+      if (!currNode.next) {
+        return;
+      }
+      currNode = currNode.next;
+    }
+  }
+  swapLocations(item, swapDirection) {
+    this.printAllItems()
+    if (!item[swapDirection]) {
+      return;
+    }
+    let nextNode = item.next;
+    let prevNode = item.before;
+    if (swapDirection === "next") {
+      let nextNext = nextNode.next;
+      prevNode.next = nextNode;
+      nextNode.before = prevNode;
+      nextNode.next = item;
+      item.before = nextNode;
+      item.next = nextNext;
+    } else {
+      if (!prevNode.before) {
+        // head
+        item.before = null;
+        item.next = prevNode;
+        prevNode.before = item;
+        prevNode.next = nextNode;
+      } else {
+        let beforePrevNode = prevNode.before;
+        item.before = beforePrevNode;
+        item.next = prevNode;
+        beforePrevNode.next = item;
+        prevNode.before = item;
+        prevNode.next = nextNode;
+      }
+      console.log({
+        item
+      });
+    }
+    this.printAllItems()
+    return true;
+  }
+  parseFirstOf(item) {
+    if (typeof item === "string") {
+      return item.toLowerCase().charCodeAt(0);
+    }
+    return item;
+  }
+  sort() {
+    if (!this.head || !this.head.next) {
+      return false;
+    }
     // sorts list
+    let currNode = this.head.next;
+    let swapCount = 0;
+    // if letter is less than before, swap it with before.
+    // if letter is greater than after, swap it with next.
+    // run sort again until you reach the end
+    // this will only sort it once, we need another way to run sort again until its completely done????
+    while (currNode.item) {
+      if (!currNode.next) {
+        break;
+      }
+      if (
+        currNode.before &&
+        this.parseFirstOf(currNode.item) < this.parseFirstOf(currNode.before.item)
+      ) {
+        this.swapLocations(currNode, "before");
+        swapCount++;
+      }
+      if (
+        this.parseFirstOf(currNode.item) > this.parseFirstOf(currNode.next.item)
+      ) {
+        this.swapLocations(currNode, "next");
+        swapCount++;
+      }
+      if (!currNode.next) {
+        break;
+      }
+      currNode = currNode.next;
+    }
+    if (swapCount !== 0) {
+      return this.sort();
+    }
   }
   includes(item) {
     // checks to see if an item is included in the list
@@ -78,15 +165,25 @@ class LinkedList {
 }
 
 const list = new LinkedList();
-list.push('zero');
-list.push('one');
+// list.push("zero");
+// list.push("one");
 // console.log(list.getLastNode());
-list.pop();
+// list.pop();
 // console.log(list.getLastNode());
-list.push('one');
-list.push('two');
-list.shift();
-console.log(list.getHead());
-list.unshift('zero');
-console.log(list.getHead());
-console.log(list.includes('zero'));
+// list.push("one");
+// list.push("two");
+// list.shift();
+// console.log(list.getHead());
+// list.unshift("zero");
+// console.log(list.getHead());
+// console.log(list.includes('zero'));
+list.push("d");
+list.push("c");
+list.push("b");
+list.push("a");
+// list.printAllItems();
+
+// console.log("================");
+list.sort();
+
+// list.printAllItems();
