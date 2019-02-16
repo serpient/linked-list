@@ -1,5 +1,7 @@
 # Linked List + Dynamic Array (2/15)
-Read in a list of names and sort them alphabetically. (Imagine they're users). Implement the sort yourself, do not rely on built in sort functions. Provide a function to check if a name is in this list.
+- Read in a list of names and sort them alphabetically. (Imagine they're users). 
+- Implement the sort yourself, do not rely on built in sort functions. 
+- Provide a function to check if a name is in this list.
 
 ### Getting Started
 You can either fork or clone this repo.
