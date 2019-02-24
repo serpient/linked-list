@@ -1,9 +1,8 @@
-// DOM Manipulation with Pure JavaScript
-const testerPureJavaScriptFunction = () => {
-  const subtext = document.getElementsByClassName('subtext')[0];
-  subtext.setAttribute('style', "background-color: blue" );
-}
-
 window.addEventListener('load', () => {
-  testerPureJavaScriptFunction();
+  let root = document.getElementById('root');
+  let div = document.createElement('div');
+  div.setAttribute('class', 'name');
+  let text = document.createTextNode('test');
+  div.appendChild(text);
+  root.appendChild(div);
 })
