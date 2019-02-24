@@ -1,7 +1,7 @@
 class LinkedList {
   constructor() {
     this.node = {
-      before: null,
+      prev: null,
       item: null,
       next: null
     };
@@ -18,45 +18,58 @@ class LinkedList {
     while (currNode.next) {
       currNode = currNode.next;
     }
-    if (!currNode.next) {
-      return currNode;
-    }
+    return currNode;
   }
   pop() {
     // removes last element from list
-    let lastNode = this.getLastNode();
-    let beforeNode = lastNode.before;
-    beforeNode.next = null;
+    if (!this.head || !this.head.next) {
+      // if list is empty or only has 1 item
+      this.head = null;
+    } else {
+      let lastNode = this.getLastNode();
+      let prevNode = lastNode.prev;
+      prevNode.next = null
+    }
   }
   push(item) {
     // adds element to end of list
     let node = {
-      before: null,
-      item: item,
+      prev: null,
+      item,
       next: null
     };
     if (!this.head) {
-      return (this.head = node);
+      // no head
+      this.head = node;
+      return;
     }
     // transverse from head through list until you reach a null next
     let lastNode = this.getLastNode();
     lastNode.next = node;
-    node.before = lastNode;
+    node.prev = lastNode;
   }
   shift() {
     // removes first item in list
-    let nextNode = this.head.next;
-    nextNode.before = null;
-    this.head = nextNode;
+    if (!this.head || this.head.next) {
+      // a empty or a list with 1 item
+      this.head = null;
+    } else {
+      let nextNode = this.head.next;
+      nextNode.prev = null;
+      this.head = nextNode;
+    }
   }
   unshift(item) {
     // adds item to beginning of list
     let currHead = this.head;
     let node = {
-      before: null,
-      item: item,
+      prev: null,
+      item,
       next: currHead
     };
+    if (currHead) {
+      currHead.prev = node;
+    }
     this.head = node;
   }
   printAllItems() {
@@ -70,41 +83,55 @@ class LinkedList {
       currNode = currNode.next;
     }
   }
-  swapLocations(item, swapDirection) {
-    this.printAllItems()
-    if (!item[swapDirection]) {
-      return;
-    }
-    let nextNode = item.next;
-    let prevNode = item.before;
-    if (swapDirection === "next") {
-      let nextNext = nextNode.next;
-      prevNode.next = nextNode;
-      nextNode.before = prevNode;
-      nextNode.next = item;
-      item.before = nextNode;
-      item.next = nextNext;
+  unlink(node) {
+    if (!node.prev) {
+      // removing from head
+      this.shift();
+      console.log('removing from head');
+    } else if (!node.next) {
+      // removing from tail
+      this.pop();
+      console.log('removing from tail');
     } else {
-      if (!prevNode.before) {
-        // head
-        item.before = null;
-        item.next = prevNode;
-        prevNode.before = item;
-        prevNode.next = nextNode;
-      } else {
-        let beforePrevNode = prevNode.before;
-        item.before = beforePrevNode;
-        item.next = prevNode;
-        beforePrevNode.next = item;
-        prevNode.before = item;
-        prevNode.next = nextNode;
-      }
-      console.log({
-        item
-      });
+      // remove node from middle of list
+      let prevNode = node.prev;
+      let nextNode = node.next;
+      prevNode.next = nextNode;
+      nextNode.prev = prevNode;
     }
-    this.printAllItems()
-    return true;
+
+    node.prev = null;
+    node.next = null;
+
+    return node;
+  }
+  insertprev(node, newNode) {
+    if (!node.prev) {
+      // at head of list
+      this.unshift(newNode.item);
+    } else {
+      let prevNode = node.prev;
+
+      prevNode.next = newNode;
+      newNode.prev = prevNode;
+
+      newNode.next = node;
+      node.prev = newNode;
+    }
+  }
+  insertAfter(node, newNode) {
+    if (!node.next) {
+      // at end of list
+      this.push(newNode.item);
+    } else {
+      let nextNode = node.next;
+
+      node.next = newNode;
+      newNode.prev = node;
+
+      newNode.next = nextNode;
+      nextNode.prev = newNode;
+    }
   }
   parseFirstOf(item) {
     if (typeof item === "string") {
@@ -116,38 +143,37 @@ class LinkedList {
     if (!this.head || !this.head.next) {
       return false;
     }
-    // sorts list
     let currNode = this.head.next;
     let swapCount = 0;
-    // if letter is less than before, swap it with before.
-    // if letter is greater than after, swap it with next.
-    // run sort again until you reach the end
-    // this will only sort it once, we need another way to run sort again until its completely done????
-    while (currNode.item) {
-      if (!currNode.next) {
-        break;
-      }
+    while (currNode.next) {
+      this.printAllItems();
+      let nextNode = currNode.next;
       if (
-        currNode.before &&
-        this.parseFirstOf(currNode.item) < this.parseFirstOf(currNode.before.item)
+        currNode.prev &&
+        this.parseFirstOf(currNode.item) < this.parseFirstOf(currNode.prev.item)
       ) {
-        this.swapLocations(currNode, "before");
+        let prevNode = currNode.prev;
+        let node = this.unlink(currNode);
+        this.insertprev(prevNode, node);
+        console.log(`insert ${node.item} prev ${prevNode.item}`);
         swapCount++;
       }
-      if (
-        this.parseFirstOf(currNode.item) > this.parseFirstOf(currNode.next.item)
-      ) {
-        this.swapLocations(currNode, "next");
-        swapCount++;
-      }
-      if (!currNode.next) {
-        break;
-      }
-      currNode = currNode.next;
+      // if (
+      //   currNode.next &&
+      //   this.parseFirstOf(currNode.item) > this.parseFirstOf(currNode.next.item)
+      // ) {
+      //   let nextNode = currNode.next;
+      //   let node = this.unlink(currNode);
+      //   this.insertAfter(nextNode, node);
+      //   console.log(`insert ${node.item} after ${nextNode.item}`);
+      //   swapCount++;
+      // }
+      currNode = nextNode;
     }
     if (swapCount !== 0) {
       return this.sort();
     }
+    return;
   }
   includes(item) {
     // checks to see if an item is included in the list
@@ -177,13 +203,18 @@ const list = new LinkedList();
 // list.unshift("zero");
 // console.log(list.getHead());
 // console.log(list.includes('zero'));
+list.push("z");
+list.push("k");
+list.push("g");
+list.push("f");
+list.push("e");
 list.push("d");
-list.push("c");
-list.push("b");
 list.push("a");
-// list.printAllItems();
+list.printAllItems();
 
-// console.log("================");
+// list.unlink(list.head.next);
+// list.printAllItems();
+console.log("================");
 list.sort();
 
 // list.printAllItems();
